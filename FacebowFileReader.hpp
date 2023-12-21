@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef MIMETRIK_FACEBOW_FILE_READER_HPP
+#define MIMETRIK_FACEBOW_FILE_READER_HPP
+
 #include <filesystem>
 #include <fstream>
 #include <vector>
@@ -10,6 +15,8 @@
 #include "opencv2/core.hpp"
 #include "opencv2/imgcodecs.hpp"
 
+
+namespace Mimetrik {
 
 struct MFBAVersion {
     std::uint8_t major;
@@ -47,7 +54,7 @@ inline bool is_little_endian()
  * @param[in] num_bytes The number of bytes to read.
  * @return A vector of bytes.
  */
-std::vector<std::byte> read_bytes_from_file(const std::filesystem::path& filepath, std::size_t start_byte, std::size_t num_bytes) {
+inline std::vector<std::byte> read_bytes_from_file(const std::filesystem::path& filepath, std::size_t start_byte, std::size_t num_bytes) {
     std::ifstream ifs(filepath, std::ios::binary | std::ios::ate);
 
     if (!ifs)
@@ -80,7 +87,7 @@ std::vector<std::byte> read_bytes_from_file(const std::filesystem::path& filepat
  * @param[in] mfba_file The path to the MFBA file.
  * @return A pair of a bool indicating whether the header is valid and the version if it is valid.
  */
-std::pair<bool, std::optional<MFBAVersion>> validate_mfba_header(const std::filesystem::path& mfba_file) {
+inline std::pair<bool, std::optional<MFBAVersion>> validate_mfba_header(const std::filesystem::path& mfba_file) {
     std::vector<std::byte> expected_signature = { std::byte('F'), std::byte('F'), std::byte('F') };
     const auto file_signature = read_bytes_from_file(mfba_file, 0, 3);
     if (file_signature != expected_signature)
@@ -263,3 +270,7 @@ private:
 		return output;
     }
 };
+
+}; // namespace Mimetrik
+
+#endif /* MIMETRIK_FACEBOW_FILE_READER_HPP */
