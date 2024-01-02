@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <optional>
 #include <cstdint>
+#include <map>
 #include <string>
 
 #include "nlohmann/json.hpp"
@@ -167,7 +168,7 @@ public:
      * @param[in] mfba_file The path to the MFBA file.
      * @param[in] index The index of the metadata to read.
      */
-    int get_metadata(std::size_t index) {
+    std::map<std::string, std::map<std::string, std::string>> get_metadata(std::size_t index) {
         if (index >= num_frames)
 			throw std::runtime_error("Image frame out of range, file includes " + std::to_string(num_frames) + " frames");
         
@@ -182,24 +183,22 @@ public:
         // Now convert the string to a JSON object:
         nlohmann::json json_metadata = nlohmann::json::parse(metadata);
 
-        /* We probably want the following? Some of them are duplicated, there is "metadataSource": "CameraCharacteristics" and "metadataSource": "CaptureResult". We may want the latter, if the values are not identical?
-            "key": "android.lens.distortion",
-            "value": "[0.0883828, -0.16732782, 0.1392884, 0.0, 0.0]"
-
-            "key": "android.lens.info.availableFocalLengths",
-            "value": "[5.43]"
-
-        */
-
-        // json_metadata[2] contains "metadataSource: CaptureResult", which then has a list of key-value pairs in "contents". We'll copy it into a map so we can access its values more easily:
-        std::map<std::string, std::string> capture_result_metadata;
-        for (const auto& e : json_metadata[2]["contents"])
-        {
-            capture_result_metadata.emplace(e["key"].template get<std::string>(), e["value"].template get<std::string>());
+        // json_metadata contains three arrays: "Orientation", "CameraCharacteristics", and "CaptureResult".
+        // We are mainly interested in json_metadata[2], which contains "metadataSource: CaptureResult", which then has a list of
+        // key-value pairs in "contents". But it probably won't hurt to just return everything, in case we need something else later
+        // (e.g. the orientation). We'll copy everything into a map<string, map<string, string>>, so we can access all the values more easily:
+        std::map<std::string, std::map<std::string, std::string>> json_camera_data;
+        for (const auto& top_level_element : json_metadata) {
+            const auto metadata_source = top_level_element["metadataSource"].template get<std::string>();
+            std::map<std::string, std::string> contents;
+            for (const auto& e : top_level_element["contents"])
+			{
+                contents.emplace(e["key"].template get<std::string>(), e["value"].template get<std::string>());
+			}
+			json_camera_data.emplace(metadata_source, contents);
         }
 
-        // Todo: Find out which values we want, and return them.
-        return 0;
+        return json_camera_data;
     };
 
     /* Read the image at index \p index from the given MFBA file and return it.
