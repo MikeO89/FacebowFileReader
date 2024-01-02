@@ -60,6 +60,7 @@ inline std::vector<std::byte> read_bytes_from_file(const std::filesystem::path& 
     if (!ifs)
         throw std::runtime_error(filepath.string() + ": " + std::strerror(errno));
 
+    // The following pattern of seeking is from https://stackoverflow.com/a/51353040.
     const auto end = ifs.tellg();
     ifs.seekg(0, std::ios::beg);
 
