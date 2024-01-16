@@ -2,3 +2,6 @@
 .vs/
 out/build/
 CMakeSettings.json
+
+# Directory created by `python setup.py bdist`:
+build/
