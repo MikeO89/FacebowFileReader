@@ -216,17 +216,43 @@ public:
         const auto imagedata_bytes = read_bytes_from_file(filepath, frame_location_info[index].frame_index + frame_location_info[index].offset_to_header + frame_location_info[index].offset_to_image, frame_location_info[index].image_size);
         const auto processed_imagedata = XOR(imagedata_bytes);
 
-        cv::Mat image(image_height, image_width, CV_8UC3);
-        std::size_t i = 0;
-        for (int row = 0; row < image_height; ++row)
+		// We need the metadata to know the orientation. Not ideal, but we'll work with it for now. EG are currently not storing the width and height correctly for landscape images, thus we need the if/else below.
+		const auto exif_orientation_value = std::stoi(get_metadata(index).at("Orientation").at("Orientation"));
+
+		cv::Mat image;
+		// See the different orientation values here: https://developer.android.com/reference/android/media/ExifInterface
+        if (exif_orientation_value == 6) // 6 is ORIENTATION_ROTATE_90 - which means a portrait image:
 		{
-			for (int col = 0; col < image_width; ++col)
+			image = cv::Mat(image_height, image_width, CV_8UC3);
+			std::size_t i = 0;
+			for (int row = 0; row < image_height; ++row)
 			{
-                // The data is stored in BGR order - since OpenCV uses BGR by default, we don't need to swap the order:
-				image.at<cv::Vec3b>(row, col)[0] = static_cast<std::uint8_t>(processed_imagedata[i++]);
-				image.at<cv::Vec3b>(row, col)[1] = static_cast<std::uint8_t>(processed_imagedata[i++]);
-				image.at<cv::Vec3b>(row, col)[2] = static_cast<std::uint8_t>(processed_imagedata[i++]);
+				for (int col = 0; col < image_width; ++col)
+				{
+					// The data is stored in BGR order - since OpenCV uses BGR by default, we don't need to swap the order:
+					image.at<cv::Vec3b>(row, col)[0] = static_cast<std::uint8_t>(processed_imagedata[i++]);
+					image.at<cv::Vec3b>(row, col)[1] = static_cast<std::uint8_t>(processed_imagedata[i++]);
+					image.at<cv::Vec3b>(row, col)[2] = static_cast<std::uint8_t>(processed_imagedata[i++]);
+				}
 			}
+		} else if (exif_orientation_value == 1) // 1 is ORIENTATION_NORMAL which means a landscape image:
+		{
+			// Note w/h are swapped here - image_width is actually the height, image_height is the width. See comment further above about EG's storing of the width/height.
+			image = cv::Mat(image_width, image_height, CV_8UC3);
+			std::size_t i = 0;
+			for (int row = 0; row < image_width; ++row)
+			{
+				for (int col = 0; col < image_height; ++col)
+				{
+					// The data is stored in BGR order - since OpenCV uses BGR by default, we don't need to swap the order:
+					image.at<cv::Vec3b>(row, col)[0] = static_cast<std::uint8_t>(processed_imagedata[i++]);
+					image.at<cv::Vec3b>(row, col)[1] = static_cast<std::uint8_t>(processed_imagedata[i++]);
+					image.at<cv::Vec3b>(row, col)[2] = static_cast<std::uint8_t>(processed_imagedata[i++]);
+				}
+			}
+		}
+		else {
+			throw std::runtime_error("Unsupported orientation value: " + std::to_string(exif_orientation_value));
 		}
 
         return image;
