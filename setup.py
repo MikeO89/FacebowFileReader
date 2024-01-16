@@ -117,7 +117,7 @@ class CMakeBuild(build_ext):
 
         # Let's get the dependencies via vcpkg. Pull vcpkg:
         if not os.path.isdir(build_temp / "vcpkg"):
-            subprocess.run("git clone https://github.com/microsoft/vcpkg", cwd=build_temp, check=True)
+            subprocess.run("git clone https://github.com/microsoft/vcpkg", cwd=build_temp, shell=True, check=True)
 
         # Bootstrap vcpkg:
         if sys.platform.startswith("win"):
