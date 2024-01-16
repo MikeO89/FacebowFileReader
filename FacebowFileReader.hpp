@@ -221,7 +221,10 @@ public:
 
 		cv::Mat image;
 		// See the different orientation values here: https://developer.android.com/reference/android/media/ExifInterface
-        if (exif_orientation_value == 6) // 6 is ORIENTATION_ROTATE_90 - which means a portrait image:
+        // 6: ORIENTATION_ROTATE_90: Normal, upright portrait image
+        // 7: ORIENTATION_TRANSVERSE: "flipped about top-right <--> bottom-left axis". Portrait. I think this is when the phone is upside down - and it flips the image so the image itself is upright again.
+        // A StackOverflow post said that these values are further documented in Android's source code in android\media\ExifInterface.java.
+        if (exif_orientation_value == 6 || exif_orientation_value == 7)
 		{
 			image = cv::Mat(image_height, image_width, CV_8UC3);
 			std::size_t i = 0;
@@ -235,7 +238,10 @@ public:
 					image.at<cv::Vec3b>(row, col)[2] = static_cast<std::uint8_t>(processed_imagedata[i++]);
 				}
 			}
-		} else if (exif_orientation_value == 1) // 1 is ORIENTATION_NORMAL which means a landscape image:
+		}
+        // 1: ORIENTATION_NORMAL which means a landscape image - this is the phone rotated to the left.
+        // 3: ORIENTATION_ROTATE_180, which is landscape too - likely the phone rotated to the right.
+        else if (exif_orientation_value == 1 || exif_orientation_value == 3)
 		{
 			// Note w/h are swapped here - image_width is actually the height, image_height is the width. See comment further above about EG's storing of the width/height.
 			image = cv::Mat(image_width, image_height, CV_8UC3);
@@ -250,8 +256,7 @@ public:
 					image.at<cv::Vec3b>(row, col)[2] = static_cast<std::uint8_t>(processed_imagedata[i++]);
 				}
 			}
-		}
-		else {
+        } else {
 			throw std::runtime_error("Unsupported orientation value: " + std::to_string(exif_orientation_value));
 		}
 
