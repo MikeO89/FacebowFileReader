@@ -17,7 +17,7 @@
 #include "opencv2/imgcodecs.hpp"
 
 
-namespace Mimetrik {
+namespace mimetrik {
 
 struct MFBAVersion {
     std::uint8_t major;
@@ -109,6 +109,9 @@ inline std::pair<bool, std::optional<MFBAVersion>> validate_mfba_header(const st
 class FacebowFileReader {
 
 public:
+    /* Construct a FacebowFileReader object for the given MFBA file.
+     *
+     */
     FacebowFileReader(const std::filesystem::path& filepath) : filepath(filepath) {
 
         if (!std::filesystem::exists(filepath))
@@ -271,6 +274,6 @@ private:
     }
 };
 
-}; // namespace Mimetrik
+}; // namespace mimetrik
 
 #endif /* MIMETRIK_FACEBOW_FILE_READER_HPP */
