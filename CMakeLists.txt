@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.18.2)
 project(FacebowFileReader VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -14,3 +14,11 @@ add_executable(FacebowFileReader
 )
 
 target_link_libraries(FacebowFileReader PRIVATE nlohmann_json::nlohmann_json opencv_core opencv_imgcodecs)
+
+# Python bindings:
+find_package(Python COMPONENTS Interpreter Development REQUIRED)
+find_package(pybind11 CONFIG REQUIRED)
+
+pybind11_add_module(python-bindings python-bindings.cpp pybind11_opencv.hpp)
+target_link_libraries(python-bindings PRIVATE opencv_core)  # we should create a FacebowFileReader library target and then link to that.
+set_target_properties(python-bindings PROPERTIES OUTPUT_NAME FacebowFileReader)
