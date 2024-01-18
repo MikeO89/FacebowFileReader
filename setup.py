@@ -131,8 +131,8 @@ class CMakeBuild(build_ext):
         cmake_args += [ "-B build" ]  # otherwise CMake doesn't pick up vcpkg.json
 
         # Run CMake (the first call will run vcpkg install on vcpkg.json):
-        subprocess.run(["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True)
-        subprocess.run(["cmake", "--build", "build/", *build_args], cwd=build_temp, check=True)
+        subprocess.run(["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, shell=True, check=True)
+        subprocess.run(["cmake", "--build", "build/", *build_args], cwd=build_temp, shell=True, check=True)
 
 
 setup(
