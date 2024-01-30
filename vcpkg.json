@@ -6,7 +6,6 @@
     "nlohmann-json",
     {
       "name": "opencv4",
-      "features": [ "jpeg", "png" ],
       "default-features": false
     },
     "pybind11"
