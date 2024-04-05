@@ -287,7 +287,7 @@ private:
      * @param[in] mfba_file The path to the MFBA file.
      * @return The number of images in the MFBA file.
      */
-    std::size_t read_image_count() {
+    std::size_t read_image_count() const {
         // Note: 2 bytes are reserved for this in the MFBA file header.
         auto number_of_frames_as_bytes = read_bytes_from_file(filepath, 6, 2);
         if (is_little_endian())
