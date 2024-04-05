@@ -10,7 +10,7 @@ find_package(OpenCV CONFIG REQUIRED)
 
 add_executable(FacebowFileReader
     main.cpp
-    FacebowFileReader.hpp
+    include/mimetrik/FacebowFileReader.hpp
 )
 
 target_link_libraries(FacebowFileReader PRIVATE nlohmann_json::nlohmann_json opencv_core opencv_imgcodecs)
