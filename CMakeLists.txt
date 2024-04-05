@@ -9,7 +9,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_package(OpenCV CONFIG REQUIRED)
 
 add_library(FacebowFileReader INTERFACE)
-target_link_libraries(FacebowFileReader INTERFACE nlohmann_json::nlohmann_json opencv_core opencv_imgcodecs)
+target_link_libraries(FacebowFileReader INTERFACE nlohmann_json::nlohmann_json opencv_core)
 target_sources(FacebowFileReader
 	PUBLIC
 		FILE_SET api
@@ -20,7 +20,7 @@ target_sources(FacebowFileReader
 )
 
 add_executable(convert-mfba-to-mp4 main.cpp)
-target_link_libraries(convert-mfba-to-mp4 PRIVATE FacebowFileReader)
+target_link_libraries(convert-mfba-to-mp4 PRIVATE FacebowFileReader opencv_imgcodecs)
 
 # Python bindings:
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
