@@ -8,12 +8,19 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(OpenCV CONFIG REQUIRED)
 
-add_executable(FacebowFileReader
-    main.cpp
-    include/mimetrik/FacebowFileReader.hpp
+add_library(FacebowFileReader INTERFACE)
+target_link_libraries(FacebowFileReader INTERFACE nlohmann_json::nlohmann_json opencv_core opencv_imgcodecs)
+target_sources(FacebowFileReader
+	PUBLIC
+		FILE_SET api
+		TYPE HEADERS
+		BASE_DIRS include
+		FILES
+			include/mimetrik/FacebowFileReader.hpp
 )
 
-target_link_libraries(FacebowFileReader PRIVATE nlohmann_json::nlohmann_json opencv_core opencv_imgcodecs)
+add_executable(convert-mfba-to-mp4 main.cpp)
+target_link_libraries(convert-mfba-to-mp4 PRIVATE FacebowFileReader)
 
 # Python bindings:
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
