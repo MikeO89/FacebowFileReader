@@ -5,7 +5,7 @@
 #include "pybind11/stl/filesystem.h"
 
 #include "pybind11_opencv.hpp"
-#include "FacebowFileReader.hpp"
+#include "mimetrik/FacebowFileReader.hpp"
 
 namespace py = pybind11;
 
