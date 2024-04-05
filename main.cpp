@@ -1,6 +1,6 @@
 #include <string>
 
-#include "FacebowFileReader.hpp"
+#include "mimetrik/FacebowFileReader.hpp"
 
 int main(int argc, char* argv[])
 {
