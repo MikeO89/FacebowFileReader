@@ -29,3 +29,4 @@ find_package(pybind11 CONFIG REQUIRED)
 pybind11_add_module(python-bindings python-bindings.cpp pybind11_opencv.hpp)
 target_link_libraries(python-bindings PRIVATE opencv_core)  # we should create a FacebowFileReader library target and then link to that.
 set_target_properties(python-bindings PROPERTIES OUTPUT_NAME FacebowFileReader)
+install(TARGETS FacebowFileReader convert-mfba-to-mp4 FILE_SET api)
