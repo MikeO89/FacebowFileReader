@@ -8,6 +8,7 @@
       "name": "opencv4",
       "default-features": false
     },
-    "pybind11"
+    "pybind11",
+    "gtest"
   ]
 }
