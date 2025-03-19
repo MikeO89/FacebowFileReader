@@ -22,4 +22,4 @@ Write a CI script that automatically runs these tests on a CI system/portal of y
 
 ## Solution Overview
 
-See document titled [FacebowFileReader_SoltuionOverview](https://github.com/MikeO89/FacebowFileReader/blob/main/FacebowFileReader_SoltuionOverview.pdf)
+See document titled [FacebowFileReader_SoltuionOverview](https://github.com/MikeO89/FacebowFileReader/blob/main/FacebowFileReader_SolutionOverview.pdf)
