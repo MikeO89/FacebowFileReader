@@ -5,3 +5,5 @@ CMakeSettings.json
 
 # Directory created by `python setup.py bdist`:
 build/
+
+Testing/
